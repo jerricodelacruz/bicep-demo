@@ -31,6 +31,6 @@ jobs:
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.AZURE_RG }}
-        template: ./bicep-practice-space.bicep
+        template: ./main.bicep
         parameters: 'dockerImage=go-api'
         failOnStdErr: false
