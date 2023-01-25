@@ -1,7 +1,7 @@
 param location string = resourceGroup().location
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2022-02-01-preview' existing = {
-  name: 'containerRegistryBicepDemo'
+  name: 'containerRegistryRgBicepDemo'
 }
 
 var prefix = 'bps${uniqueString(resourceGroup().id)}'

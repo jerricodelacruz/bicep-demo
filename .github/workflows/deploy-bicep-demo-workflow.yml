@@ -1,0 +1,36 @@
+on: [push]
+name: Azure ARM
+jobs:
+  deploy-in-acr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: azure/docker-login@v1 
+        with:
+          login-server: ${{ secrets.ACR_REGISTRY }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - run: |
+          docker build ./goapp -t ${{ secrets.ACR_REGISTRY }}/go-api:${{ github.sha }} -t ${{ secrets.ACR_REGISTRY }}/go-api:latest
+          docker push ${{ secrets.ACR_REGISTRY }}/go-api
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+      # Checkout code
+    - uses: actions/checkout@main
+
+      # Log into Azure
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Deploy Bicep file
+    - name: deploy
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        resourceGroupName: ${{ secrets.AZURE_RG }}
+        template: ./bicep-practice-space.bicep
+        parameters: 'dockerImage=go-api'
+        failOnStdErr: false
